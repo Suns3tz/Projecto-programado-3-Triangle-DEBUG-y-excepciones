@@ -1,0 +1,4 @@
+try 
+   putint(10)
+catch e
+   putint(e)  ! Debería compilar: 'e' es reconocido como Integer

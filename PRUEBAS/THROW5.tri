@@ -1,0 +1,10 @@
+let
+  var x : Integer
+in
+  begin
+    x := 0;
+    try
+      throw 5
+    catch e
+      x := e
+  end 

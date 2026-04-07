@@ -82,6 +82,8 @@ import Triangle.AbstractSyntaxTrees.SingleFormalParameterSequence;
 import Triangle.AbstractSyntaxTrees.SingleRecordAggregate;
 import Triangle.AbstractSyntaxTrees.SubscriptVname;
 import Triangle.AbstractSyntaxTrees.TypeDeclaration;
+import Triangle.AbstractSyntaxTrees.TryCommand;
+import Triangle.AbstractSyntaxTrees.ThrowCommand;
 import Triangle.AbstractSyntaxTrees.UnaryExpression;
 import Triangle.AbstractSyntaxTrees.UnaryOperatorDeclaration;
 import Triangle.AbstractSyntaxTrees.VarActualParameter;
@@ -92,8 +94,10 @@ import Triangle.AbstractSyntaxTrees.Vname;
 import Triangle.AbstractSyntaxTrees.VnameExpression;
 import Triangle.AbstractSyntaxTrees.WhileCommand;
 
-public final class Encoder implements Visitor {
 
+
+public final class Encoder implements Visitor {
+  private int currentCatchAddr = 0;
 
   // Commands
   public Object visitAssignCommand(AssignCommand ast, Object o) {
@@ -130,7 +134,51 @@ public final class Encoder implements Visitor {
     patch(jumpAddr, nextInstrAddr);
     return null;
   }
-
+  
+  public Object visitTryCommand(TryCommand ast, Object o){
+    Frame frame = (Frame) o;
+    int jumpToEndAddr;
+    int oldCatch = currentCatchAddr;
+    
+    
+    //Reservamos espacio para el salto del CATCH de manera Hipotetica
+    int HIPCatchAddr = nextInstrAddr;
+    //Actualizamos la variable global antes de hacer el comando
+    currentCatchAddr = HIPCatchAddr;
+    
+    ast.C1.visit(this,frame);//Visitar el cuerpo del TRY
+    
+    jumpToEndAddr = nextInstrAddr; //Si se logro el comando debemos saltarnos el catch
+    emit(Machine.JUMPop, 0, Machine.CBr, 0);
+    
+    int CatchAddr = nextInstrAddr; //Aca comienza el CATCH
+    
+    patch(HIPCatchAddr, CatchAddr); //Parcheamos el CATCH hipotetico
+    
+    ast.I.decl.visit(this, frame); //Visitamos el identificador y asignamos a 'e'
+    
+    //Frame que incluye la variable del catch
+    Frame catchFrame = new Frame(frame.level, frame.size + 1);
+    
+    ast.C2.visit(this, catchFrame); //Visitamos el cuerpo del CATCH
+    
+    patch(jumpToEndAddr, nextInstrAddr); //Patch del salto final
+      
+    currentCatchAddr = oldCatch; //Restaurar el catch anterior
+    
+    return null;
+  }
+  
+  public Object visitThrowCommand(ThrowCommand ast, Object o){
+    Frame frame = (Frame) o;
+    
+    ast.E.visit(this, frame);
+    
+    emit(Machine.JUMPop, 0, Machine.CBr, currentCatchAddr);
+    
+    return null;
+  }
+  
   public Object visitLetCommand(LetCommand ast, Object o) {
     Frame frame = (Frame) o;
     int extraSize = ((Integer) ast.D.visit(this, frame)).intValue();

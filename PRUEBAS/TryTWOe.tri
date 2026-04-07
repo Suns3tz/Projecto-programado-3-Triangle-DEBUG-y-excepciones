@@ -1,0 +1,5 @@
+let var e: Char in
+try 
+   e := 'A'
+catch e
+   putint(e) ! Debería funcionar: la 'e' del catch oculta a la 'e' Char
