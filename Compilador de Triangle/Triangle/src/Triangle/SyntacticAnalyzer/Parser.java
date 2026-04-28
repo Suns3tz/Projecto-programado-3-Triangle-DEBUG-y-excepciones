@@ -277,9 +277,12 @@ public class Parser {
        Command c1AST = parseSingleCommand();
        accept(Token.CATCH);
        Identifier iAST = parseIdentifier();
+       accept(Token.COLON);
+       TypeDenoter tAST = parseTypeDenoter();
+    
        Command c2AST = parseSingleCommand();
        finish(commandPos);
-       commandAST = new TryCommand(c1AST, iAST, c2AST, commandPos);
+       commandAST = new TryCommand(c1AST, iAST, tAST, c2AST, commandPos);
       }
       break;
     

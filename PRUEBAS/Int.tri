@@ -1,4 +1,4 @@
 try 
    putint(10)
-catch e
+catch e : Integer
    putint(e)  ! Debería compilar: 'e' es reconocido como Integer

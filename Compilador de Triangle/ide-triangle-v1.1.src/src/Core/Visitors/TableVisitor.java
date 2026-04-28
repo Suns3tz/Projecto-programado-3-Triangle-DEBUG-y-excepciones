@@ -146,6 +146,7 @@ public class TableVisitor implements Visitor {
   public Object visitTryCommand(TryCommand ast, Object o) {
       ast.C1.visit(this, null);
       ast.I.visit(this, null);
+      ast.T.visit(this, null);
       ast.C2.visit(this, null);
       
       return(null);

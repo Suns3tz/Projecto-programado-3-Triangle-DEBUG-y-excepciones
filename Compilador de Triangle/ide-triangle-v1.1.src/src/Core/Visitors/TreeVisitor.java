@@ -119,7 +119,7 @@ public class TreeVisitor implements Visitor {
     }
     
     public Object visitTryCommand(TryCommand ast, Object obj){
-        return(createTernary("Try Command", ast.C1, ast.I, ast.C2));
+        return(createQuaternary("Try Command", ast.C1, ast.I, ast.T, ast.C2));
     }
     
     public Object visitThrowCommand(ThrowCommand ast, Object obj){

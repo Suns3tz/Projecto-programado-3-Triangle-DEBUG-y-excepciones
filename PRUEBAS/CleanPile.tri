@@ -1,0 +1,26 @@
+let
+  type ErrorGrave ~ record code: Integer, severity: Integer end;
+  var log : Integer;
+  var status : Integer
+in
+  begin
+    log := 0;
+    status := 0;
+    try
+      begin
+        try
+          begin
+            throw {code ~ 404, severity ~ 1} ! Lanza un RECORD (tamaño 2)
+          end
+        catch e1 : ErrorGrave
+          begin
+            log := e1.code;
+            throw 50        ! RELANZA un INTEGER (tamaño 1) al nivel superior
+          end
+      end
+    catch e2 : Integer
+      status := e2;
+
+    putint(log);    ! Debería imprimir 404
+    putint(status)  ! Debería imprimir 50
+  end

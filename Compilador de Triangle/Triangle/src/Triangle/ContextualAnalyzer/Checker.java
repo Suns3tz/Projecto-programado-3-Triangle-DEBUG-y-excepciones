@@ -14,6 +14,7 @@
 
 package Triangle.ContextualAnalyzer;
 
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
@@ -82,17 +83,25 @@ public final class Checker implements Visitor {
   }
 
   public Object visitTryCommand(TryCommand ast, Object o) {
-      ast.C1.visit(this, null);
-      idTable.openScope();
       
-      VarDeclaration vDecl = new VarDeclaration(ast.I, StdEnvironment.integerType, ast.I.position);
+      ast.C1.visit(this, null); //Revisar el cuerpo del Try
       
-      idTable.enter(ast.I.spelling, vDecl);
+      idTable.openScope(); //Abrir para el CATCH
       
+      
+      //Visitamos el TypeDenoter
+      TypeDenoter catchType = (TypeDenoter) ast.T.visit(this, null);
+      
+      //Creamos la declaracion de la variable 'e'
+      VarDeclaration vDecl = new VarDeclaration(ast.I, catchType, ast.I.position);
+      
+      idTable.enter(ast.I.spelling, vDecl); //La insertamos en la tabla de tipos
+      
+      //Guardamos la informacion en el nodo del identificador para el encoder
       ast.I.decl = vDecl;
       ast.I.type = StdEnvironment.integerType;
       
-      ast.C2.visit(this, null);
+      ast.C2.visit(this, null); //Cuerpo del catch
       
       idTable.closeScope();
       return null;
@@ -100,9 +109,6 @@ public final class Checker implements Visitor {
   
   public Object visitThrowCommand(ThrowCommand ast, Object o){
       TypeDenoter eType = (TypeDenoter) ast.E.visit(this, null);
-      if(! eType.equals(StdEnvironment.integerType)){
-          reporter.reportError("Integer expression expected in throw", "", ast.E.position);
-      }
       return null;
   }
   

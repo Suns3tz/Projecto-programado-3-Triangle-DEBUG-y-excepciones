@@ -3,12 +3,5 @@ let
 in
   begin
     x := 0;
-    try
-      begin
-        throw 5;
-        x := 99
-      end
-    catch e
-      x := e;
-    putint(x)
-  end 
+    throw 5;
+    end

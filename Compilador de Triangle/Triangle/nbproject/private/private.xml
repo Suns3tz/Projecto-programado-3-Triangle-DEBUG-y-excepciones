@@ -2,6 +2,15 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
+        <group>
+            <file>file:/C:/Users/aaron/OneDrive/Documents/GitHub/Projecto-programado-3-Triangle-DEBUG-y-excepciones/Compilador%20de%20Triangle/Triangle/src/Triangle/SyntacticAnalyzer/Token.java</file>
+            <file>file:/C:/Users/aaron/OneDrive/Documents/GitHub/Projecto-programado-3-Triangle-DEBUG-y-excepciones/Compilador%20de%20Triangle/Triangle/src/Triangle/CodeGenerator/Encoder.java</file>
+            <file>file:/C:/Users/aaron/OneDrive/Documents/GitHub/Projecto-programado-3-Triangle-DEBUG-y-excepciones/Compilador%20de%20Triangle/Triangle/src/Triangle/ContextualAnalyzer/Checker.java</file>
+            <file>file:/C:/Users/aaron/OneDrive/Documents/GitHub/Projecto-programado-3-Triangle-DEBUG-y-excepciones/Compilador%20de%20Triangle/Triangle/src/Triangle/SyntacticAnalyzer/Parser.java</file>
+            <file>file:/C:/Users/aaron/OneDrive/Documents/GitHub/Projecto-programado-3-Triangle-DEBUG-y-excepciones/Compilador%20de%20Triangle/Triangle/src/Triangle/AbstractSyntaxTrees/TryCommand.java</file>
+            <file>file:/C:/Users/aaron/OneDrive/Documents/GitHub/Projecto-programado-3-Triangle-DEBUG-y-excepciones/Compilador%20de%20Triangle/Triangle/src/Triangle/TreeDrawer/DrawerFrame.java</file>
+            <file>file:/C:/Users/aaron/OneDrive/Documents/GitHub/Projecto-programado-3-Triangle-DEBUG-y-excepciones/Compilador%20de%20Triangle/Triangle/src/Triangle/SyntacticAnalyzer/SyntaxError.java</file>
+            <file>file:/C:/Users/aaron/OneDrive/Documents/GitHub/Projecto-programado-3-Triangle-DEBUG-y-excepciones/Compilador%20de%20Triangle/Triangle/src/Triangle/TreeDrawer/LayoutVisitor.java</file>
+        </group>
     </open-files>
 </project-private>

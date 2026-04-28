@@ -5,6 +5,6 @@ in
     x := 0;
     try
       throw 5
-    catch e
+    catch e : Integer
       x := e
   end 

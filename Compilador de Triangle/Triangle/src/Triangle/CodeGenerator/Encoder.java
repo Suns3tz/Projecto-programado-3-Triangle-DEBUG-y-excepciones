@@ -14,6 +14,7 @@
 
 package Triangle.CodeGenerator;
 
+import Triangle.AbstractSyntaxTrees.TypeDenoter;
 import java.io.DataOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -98,7 +99,7 @@ import Triangle.AbstractSyntaxTrees.WhileCommand;
 
 public final class Encoder implements Visitor {
   private int currentCatchAddr = 0;
-
+  private TypeDenoter expectedCatchType = null;
   // Commands
   public Object visitAssignCommand(AssignCommand ast, Object o) {
     Frame frame = (Frame) o;
@@ -135,30 +136,47 @@ public final class Encoder implements Visitor {
     return null;
   }
   
+  
+  
   public Object visitTryCommand(TryCommand ast, Object o){
     Frame frame = (Frame) o;
     int jumpToEndAddr;
     int oldCatch = currentCatchAddr;
     
+    //Salto de seguridad
+    int skipPortalAddr = nextInstrAddr;
+    emit(Machine.JUMPop, 0, Machine.CBr, 0);
     
     //Reservamos espacio para el salto del CATCH de manera Hipotetica
+    //Todos los Throws internos conocen esta direccion
     int HIPCatchAddr = nextInstrAddr;
     //Actualizamos la variable global antes de hacer el comando
+    emit(Machine.JUMPop, 0, Machine.CBr, 0); //Parchear al catch real
+    
     currentCatchAddr = HIPCatchAddr;
     
+    //Parcheamos el salto para que caiga en C1 directo
+    patch(skipPortalAddr, nextInstrAddr);
+    
     ast.C1.visit(this,frame);//Visitar el cuerpo del TRY
+    
+   
     
     jumpToEndAddr = nextInstrAddr; //Si se logro el comando debemos saltarnos el catch
     emit(Machine.JUMPop, 0, Machine.CBr, 0);
     
-    int CatchAddr = nextInstrAddr; //Aca comienza el CATCH
+    int CatchAddr = nextInstrAddr; //Aca comienza el CATCH REAL
     
     patch(HIPCatchAddr, CatchAddr); //Parcheamos el CATCH hipotetico
     
-    ast.I.decl.visit(this, frame); //Visitamos el identificador y asignamos a 'e'
+    TypeDenoter thetype = ast.T;
+    int valSize = ((Integer) thetype.visit(this, null)).intValue(); //Tamaño de la variable
+    
+    ast.I.decl.entity = new KnownAddress(valSize, frame.level, frame.size); //Visitamos el identificador y asignamos a 'e'
     
     //Frame que incluye la variable del catch
-    Frame catchFrame = new Frame(frame.level, frame.size + 1);
+    //Aca el valor del tope de la pila se convierte en la variable 'e'
+    Frame catchFrame = new Frame(frame.level, valSize);
     
     ast.C2.visit(this, catchFrame); //Visitamos el cuerpo del CATCH
     
@@ -171,9 +189,19 @@ public final class Encoder implements Visitor {
   
   public Object visitThrowCommand(ThrowCommand ast, Object o){
     Frame frame = (Frame) o;
+    // Evaluar expresion
+    Integer valSize = (Integer) ast.E.visit(this, frame);
     
-    ast.E.visit(this, frame);
+    //Restauracion de la Pila
+    //Calcula cuanto crecio el frame desde el try
+    //frame.size es el tamaño actual, o.size el original
+    int amountToPop = frame.size - ((Frame)o).size;
     
+    if (amountToPop > 0){
+        //Pop que mantiene n, pero borra m
+        emit(Machine.POPop, valSize.intValue(), 0, amountToPop);
+    }
+    //Salto al portal
     emit(Machine.JUMPop, 0, Machine.CBr, currentCatchAddr);
     
     return null;

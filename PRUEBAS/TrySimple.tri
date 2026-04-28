@@ -3,5 +3,5 @@ let
 in
   try
     x := 1
-  catch e
+  catch e : Integer
     x := 2

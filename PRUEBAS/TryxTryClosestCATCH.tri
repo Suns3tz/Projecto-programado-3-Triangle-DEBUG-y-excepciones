@@ -1,0 +1,18 @@
+let
+  var control : Integer
+in
+  begin
+    control := 0;
+    try
+      try
+        begin
+          throw 10;
+          control := 1  ! No debe ejecutarse
+        end
+      catch e1 : Integer
+        control := e1   ! Debe entrar aquí
+    catch e2 : Integer
+      control := 99;    ! No debe entrar aquí
+      
+    putint(control)     ! RESULTADO ESPERADO: 10
+  end

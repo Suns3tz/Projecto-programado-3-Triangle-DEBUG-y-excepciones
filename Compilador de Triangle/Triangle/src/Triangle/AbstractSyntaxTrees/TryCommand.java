@@ -11,10 +11,11 @@ import Triangle.SyntacticAnalyzer.SourcePosition;
  * @author aaron
  */
 public class TryCommand extends Command{
-    public TryCommand(Command c1AST, Identifier iAST, Command c2AST, SourcePosition thePosition ) {
+    public TryCommand(Command c1AST, Identifier iAST, TypeDenoter tAST, Command c2AST, SourcePosition thePosition ) {
         super(thePosition);
         C1 = c1AST;
         I = iAST;
+        T = tAST;
         C2 = c2AST;
     }
     public Object visit(Visitor v, Object o ){
@@ -23,5 +24,6 @@ public class TryCommand extends Command{
     
     public Command C1;
     public Identifier I;
+    public TypeDenoter T;
     public Command C2;
 }

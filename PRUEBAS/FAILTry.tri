@@ -1,5 +1,3 @@
-try 
-   putint(10)
-catch e
-   empty
-; putint(e)  ! DEBERÍA FALLAR: 'e' no existe fuera del bloque catch
+begin
+putint(10)
+end

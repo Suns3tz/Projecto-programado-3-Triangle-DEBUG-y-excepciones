@@ -124,7 +124,7 @@ public class LayoutVisitor implements Visitor {
   }
   
   public Object visitTryCommand(TryCommand ast, Object obj) {
-    return layoutTernary("TryCom.", ast.C1, ast.I, ast.C2);
+    return layoutQuaternary("TryCom.", ast.C1, ast.I, ast.T, ast.C2);
   }
   
   public Object visitThrowCommand(ThrowCommand ast, Object obj){
