@@ -1,0 +1,11 @@
+let
+  var x : Integer
+in
+  begin
+    x := 10;
+    try
+      x := 20
+    catch e
+      x := 30;  ! Esto NO debe ejecutarse
+    putint(x)   ! RESULTADO ESPERADO: 20
+  end

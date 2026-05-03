@@ -14,6 +14,7 @@
 
 package Triangle.ContextualAnalyzer;
 
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
@@ -81,6 +82,33 @@ public final class Checker implements Visitor {
     return null;
   }
 
+  public Object visitTryCommand(TryCommand ast, Object o) {
+      
+      ast.C1.visit(this, null); //Revisar el cuerpo del Try
+      
+      idTable.openScope(); //Abrir para el CATCH
+     
+      
+      //Guardamos la informacion en el nodo del identificador para el encoder
+      VarDeclaration vDecl = new VarDeclaration(ast.I, StdEnvironment.integerType, ast.I.position);
+      ast.I.decl = vDecl;
+      ast.I.type = StdEnvironment.integerType;
+      
+      idTable.enter(ast.I.spelling, vDecl);
+      ast.C2.visit(this, null); //Cuerpo del catch
+      
+      idTable.closeScope();
+      return null;
+  }
+  
+  public Object visitThrowCommand(ThrowCommand ast, Object o){
+      TypeDenoter eType = (TypeDenoter) ast.E.visit(this, null);
+      if (!eType.equals(StdEnvironment.integerType)){
+          reporter.reportError("Solo se pueden tener excepciones de tipo Integer", "", ast.E.position);
+      }
+      return null;
+  }
+  
   public Object visitWhileCommand(WhileCommand ast, Object o) {
     TypeDenoter eType = (TypeDenoter) ast.E.visit(this, null);
     if (! eType.equals(StdEnvironment.booleanType))

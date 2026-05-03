@@ -1,0 +1,9 @@
+begin
+  try
+    begin
+    ;
+    end ! Un comando vacío
+  catch e
+    ; ;
+  putint(1) ! RESULTADO ESPERADO: 1
+end

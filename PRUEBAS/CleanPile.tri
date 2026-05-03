@@ -1,0 +1,29 @@
+let
+  var i: Integer
+in
+  begin
+    i := 0;
+    while i < 3 do
+      begin
+        putint(i);
+        puteol();
+        try
+          begin
+            if i - 1 < 0 then
+              throw (i - 1)
+            else
+              begin
+                putint(i - 1);
+                puteol()
+              end
+          end
+        catch e
+          begin
+            putint(99);
+            puteol();
+            putint(e);
+            puteol()
+          end;
+        i := i + 1
+      end
+  end

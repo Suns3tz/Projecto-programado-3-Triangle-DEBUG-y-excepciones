@@ -72,6 +72,8 @@ import Triangle.AbstractSyntaxTrees.SingleFormalParameterSequence;
 import Triangle.AbstractSyntaxTrees.SingleRecordAggregate;
 import Triangle.AbstractSyntaxTrees.SubscriptVname;
 import Triangle.AbstractSyntaxTrees.TypeDeclaration;
+import Triangle.AbstractSyntaxTrees.TryCommand;
+import Triangle.AbstractSyntaxTrees.ThrowCommand;
 import Triangle.AbstractSyntaxTrees.UnaryExpression;
 import Triangle.AbstractSyntaxTrees.UnaryOperatorDeclaration;
 import Triangle.AbstractSyntaxTrees.VarActualParameter;
@@ -119,6 +121,14 @@ public class LayoutVisitor implements Visitor {
 
   public Object visitWhileCommand(WhileCommand ast, Object obj) {
     return layoutBinary("WhileCom.", ast.E, ast.C);
+  }
+  
+  public Object visitTryCommand(TryCommand ast, Object obj) {
+    return layoutTernary("TryCom.", ast.C1, ast.I, ast.C2);
+  }
+  
+  public Object visitThrowCommand(ThrowCommand ast, Object obj){
+    return layoutUnary("ThrowCom.", ast.E );
   }
   
   // Expressions

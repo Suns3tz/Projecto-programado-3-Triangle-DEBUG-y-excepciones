@@ -1,0 +1,13 @@
+let
+  type Fecha ~ record d: Integer, m: Integer end;
+  var hoy : Fecha
+in
+  begin
+    try
+      begin
+        throw {d ~ 25, m ~ 12}
+      end
+    catch e 
+      hoy := e;
+    putint(hoy.d)  ! Debería imprimir 25
+  end

@@ -14,10 +14,12 @@
 
 package Triangle.CodeGenerator;
 
+import Triangle.AbstractSyntaxTrees.TypeDenoter;
 import java.io.DataOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Stack;
 
 import javax.swing.text.TableView.TableRow;
 
@@ -82,6 +84,8 @@ import Triangle.AbstractSyntaxTrees.SingleFormalParameterSequence;
 import Triangle.AbstractSyntaxTrees.SingleRecordAggregate;
 import Triangle.AbstractSyntaxTrees.SubscriptVname;
 import Triangle.AbstractSyntaxTrees.TypeDeclaration;
+import Triangle.AbstractSyntaxTrees.TryCommand;
+import Triangle.AbstractSyntaxTrees.ThrowCommand;
 import Triangle.AbstractSyntaxTrees.UnaryExpression;
 import Triangle.AbstractSyntaxTrees.UnaryOperatorDeclaration;
 import Triangle.AbstractSyntaxTrees.VarActualParameter;
@@ -92,9 +96,13 @@ import Triangle.AbstractSyntaxTrees.Vname;
 import Triangle.AbstractSyntaxTrees.VnameExpression;
 import Triangle.AbstractSyntaxTrees.WhileCommand;
 
+
+
 public final class Encoder implements Visitor {
+  private int currentCatchAddr = 0; // Direccion del catch actual
+  private Stack<Integer> catchAddrStack = new Stack<>(); //Pila de direcciones de catch
 
-
+  
   // Commands
   public Object visitAssignCommand(AssignCommand ast, Object o) {
     Frame frame = (Frame) o;
@@ -130,7 +138,81 @@ public final class Encoder implements Visitor {
     patch(jumpAddr, nextInstrAddr);
     return null;
   }
-
+  
+  public Object visitTryCommand(TryCommand ast, Object o){
+    Frame frame = (Frame) o;
+    int jumpToEndAddr;
+    
+    catchAddrStack.push(currentCatchAddr); //Guardar el manejador actual en la pila
+    
+    //Salto de seguridad
+    int skipPortalAddr = nextInstrAddr;
+    emit(Machine.JUMPop, 0, Machine.CBr, 0);
+    
+    //Reservamos espacio para el salto del CATCH de manera Hipotetica
+    //Todos los Throws internos conocen esta direccion
+    int HIPCatchAddr = nextInstrAddr;
+    //Actualizamos la variable global antes de hacer el comando
+    emit(Machine.JUMPop, 0, Machine.CBr, 0); //Parchear al catch real
+    
+    currentCatchAddr = HIPCatchAddr; //Direccion actual del catch
+    
+    //Parcheamos el salto para que caiga en C1 directo
+    patch(skipPortalAddr, nextInstrAddr);
+    
+    int valSize = Machine.integerSize; //Definimos el tipo de variable
+    int safeOffset = frame.size + 10; //Offset necesario para que no colisione con 
+    
+    ast.I.decl.entity = new KnownAddress(valSize, frame.level, safeOffset); //Visitamos el identificador y asignamos a 'e'
+    
+    
+   
+    
+    ast.C1.visit(this, frame);//Visitar el cuerpo del TRY
+    
+  
+    
+    jumpToEndAddr = nextInstrAddr; //Si se logro el comando debemos saltarnos el catch
+    emit(Machine.JUMPop, 0, Machine.CBr, 0);
+    
+    currentCatchAddr = catchAddrStack.pop(); //Restaurar el catch anterior
+    
+    
+    int CatchAddr = nextInstrAddr; //Aca comienza el CATCH REAL
+    
+    patch(HIPCatchAddr, CatchAddr); //Parcheamos el CATCH hipotetico
+    
+    //Valores lanzados en la cima de la pila
+    //Lo almacenamos en la variable catch usando desplazamiento seguro
+    emit(Machine.STOREop, valSize,
+            displayRegister(frame.level, frame.level), safeOffset); 
+    
+    //Frame que incluye la variable del catch
+    //Aca el valor del tope de la pila se convierte en la variable 'e'
+    Frame catchFrame = new Frame(frame.level, safeOffset + valSize);//frame.level
+    
+    ast.C2.visit(this, catchFrame); //Visitamos el cuerpo del CATCH
+    
+    patch(jumpToEndAddr, nextInstrAddr); //Patch del salto final que evita el catch cuando no hay excepcion
+      
+    
+    return null;
+  }
+  
+  public Object visitThrowCommand(ThrowCommand ast, Object o) {
+    Frame frame = (Frame) o;
+    //Evaluar la expresión 
+    ast.E.visit(this, frame); 
+    if (currentCatchAddr!= 0){
+    emit(Machine.JUMPop, 0, Machine.CBr, currentCatchAddr);
+    } else {
+        //Por si no existe un catch actual
+        reporter.reportError("No existe un catch activo.", "THROW" , ast.position);
+        emit(Machine.HALTop, 0, 0, 0);
+    }
+    return null;
+}
+  
   public Object visitLetCommand(LetCommand ast, Object o) {
     Frame frame = (Frame) o;
     int extraSize = ((Integer) ast.D.visit(this, frame)).intValue();

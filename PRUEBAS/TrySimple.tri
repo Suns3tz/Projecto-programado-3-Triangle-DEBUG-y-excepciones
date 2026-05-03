@@ -1,0 +1,11 @@
+let
+  var x : Integer
+in
+  try
+    x := 1
+
+  catch e 
+    begin
+    x := 2;
+    putint(x);
+    end

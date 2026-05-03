@@ -1,0 +1,7 @@
+let 
+   var e: string
+in
+try 
+   e := 'A'
+catch e
+   put(e) ! Debería funcionar: la 'e' del catch oculta a la 'e' Char

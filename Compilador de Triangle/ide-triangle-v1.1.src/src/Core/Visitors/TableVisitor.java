@@ -60,6 +60,8 @@ import Triangle.AbstractSyntaxTrees.SingleFormalParameterSequence;
 import Triangle.AbstractSyntaxTrees.SingleRecordAggregate;
 import Triangle.AbstractSyntaxTrees.SubscriptVname;
 import Triangle.AbstractSyntaxTrees.TypeDeclaration;
+import Triangle.AbstractSyntaxTrees.TryCommand;
+import Triangle.AbstractSyntaxTrees.ThrowCommand;
 import Triangle.AbstractSyntaxTrees.UnaryExpression;
 import Triangle.AbstractSyntaxTrees.UnaryOperatorDeclaration;
 import Triangle.AbstractSyntaxTrees.VarActualParameter;
@@ -138,6 +140,20 @@ public class TableVisitor implements Visitor {
       ast.E.visit(this, null);
       ast.C.visit(this, null);
       
+      return(null);
+  }
+  
+  public Object visitTryCommand(TryCommand ast, Object o) {
+      ast.C1.visit(this, null);
+      ast.I.visit(this, null);
+      ast.C2.visit(this, null);
+      
+      return(null);
+  }
+  
+  public Object visitThrowCommand(ThrowCommand ast, Object o){
+      ast.E.visit(this, null);
+  
       return(null);
   }
   // </editor-fold>

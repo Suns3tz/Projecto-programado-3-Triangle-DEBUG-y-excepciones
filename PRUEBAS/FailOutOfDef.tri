@@ -1,0 +1,6 @@
+try
+      throw 10
+    catch e1
+      putint(e1)
+    ;
+    putint(e1) ! <--- ESTO DEBERÍA DAR ERROR DE COMPILACIÓN

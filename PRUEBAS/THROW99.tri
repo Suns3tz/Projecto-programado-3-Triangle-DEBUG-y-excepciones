@@ -1,0 +1,7 @@
+let
+  var x : Integer
+in
+  begin
+    x := 0;
+    throw 5;
+    end

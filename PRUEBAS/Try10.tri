@@ -1,0 +1,11 @@
+let
+  var x : Integer
+in
+  begin
+    x := 0;
+    try
+      throw 7
+    catch e
+      x := (e + 3); ! e debería valer 7, x debería valer 10
+    putint(x)       ! RESULTADO ESPERADO: 10
+  end

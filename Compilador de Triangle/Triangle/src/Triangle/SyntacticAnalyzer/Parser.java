@@ -270,6 +270,29 @@ public class Parser {
         commandAST = new WhileCommand(eAST, cAST, commandPos);
       }
       break;
+    
+    case Token.TRY:
+      {
+       acceptIt();
+       Command c1AST = parseSingleCommand();
+       accept(Token.CATCH);
+       Identifier iAST = parseIdentifier();
+       
+       Command c2AST = parseSingleCommand();
+       finish(commandPos);
+       commandAST = new TryCommand(c1AST, iAST, c2AST, commandPos);
+      }
+      break;
+    
+    case Token.THROW:
+       {
+        acceptIt();
+        Expression East = parseExpression();
+        finish(commandPos);
+        commandAST = new ThrowCommand(East, commandPos);
+       }
+       break;
+    
 
     case Token.SEMICOLON:
     case Token.END:

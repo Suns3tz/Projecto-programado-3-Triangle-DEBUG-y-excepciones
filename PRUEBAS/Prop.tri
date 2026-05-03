@@ -1,0 +1,21 @@
+let
+  var control : Integer
+in
+  begin
+    control := 0;
+    try
+      begin
+        try
+          begin
+            control := 1  ! Paso 1
+          end
+        catch e1
+          control := 88;  ! No hay error aquí
+          
+        throw 20;         ! Este throw debe "saltar" al catch de afuera
+      end
+    catch e2 
+      control := e2;      ! Debe entrar aquí
+      
+    putint(control)       ! RESULTADO ESPERADO: 20
+  end

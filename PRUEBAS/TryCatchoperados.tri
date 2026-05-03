@@ -1,0 +1,17 @@
+let
+  var base : Integer;
+  var final : Integer
+in
+  begin
+    base := 10;
+    final := 0;
+    try
+      begin
+        base := base + 5;      ! base ahora es 15
+        throw (base * 2)       ! Debería lanzar 30
+      end
+    catch e
+      final := e;
+      
+    putint(final)              ! RESULTADO ESPERADO: 30
+  end

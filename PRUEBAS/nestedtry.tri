@@ -1,0 +1,18 @@
+let
+  var control : Integer
+in
+  begin
+    control := 1;
+    try
+      begin
+        control := 2;
+        try
+          control := 3
+        catch e1
+          control := 88;
+        control := 4
+      end
+    catch e2
+      control := 99;
+    putint(control)  ! RESULTADO ESPERADO: 4
+  end

@@ -1,0 +1,35 @@
+let
+  var resultado : Integer;
+  var base : Integer
+in
+  begin
+    base := 10;
+    try
+      begin
+        ! --- NIVEL 1: Intento Principal ---
+        try
+          begin
+            throw base
+          end
+        catch e1
+          begin
+            ! --- NIVEL 2: Relanzamiento ---
+            ! Usamos '<' para comparar
+            if e1 < 50 then
+              throw (e1 * 5)  ! Lanza 50
+            else
+              resultado := e1
+          end
+      end
+    catch e2
+      begin
+        ! --- NIVEL 3: Validación Final ---
+        ! IMPORTANTE: En Triangle la igualdad es '='
+        if e2 = 50 then
+          resultado := 150
+        else
+          resultado := 0
+      end;
+      
+    putint(resultado)
+  end
